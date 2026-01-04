@@ -1,5 +1,9 @@
 use nannou::prelude::*;
 
+/// Entry point for this sample application.
+///
+/// Initializes the nannou app with the `model`, `update`, and `view`
+/// functions and starts the main event loop.
 pub fn run() {
     nannou::app(model).update(update).simple_window(view).run();
 }
@@ -13,7 +17,7 @@ fn model(app: &App) -> Model {
     Model { points: Vec::new() }
 }
 
-fn update(app: &App, model: &mut Model, _update: Update) {
+fn update(app: &App, model: &mut Model, _: Update) {
     let t = app.time;
     let r = 200.0 + 50.0 * (t * 0.5).sin();
     let angle = t * 0.7;
