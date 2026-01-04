@@ -1,5 +1,7 @@
+mod buddhabrot;
 mod sample;
 
 fn main() {
-    sample::run();
+    buddhabrot::run();
+    // sample::run();
 }
