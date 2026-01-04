@@ -1,0 +1,23 @@
+services:
+  rust:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_ID: ${UID:-1000}
+        GROUP_ID: ${GID:-1000}
+    working_dir: /workspace
+    command: bash
+    tty: true
+    volumes:
+      - .:/workspace
+      - cargo-registry:/usr/local/cargo/registry
+      - cargo-git:/usr/local/cargo/git
+      - target-cache:/workspace/target
+    environment:
+      - CARGO_TARGET_DIR=/workspace/target
+
+volumes:
+  cargo-registry:
+  cargo-git:
+  target-cache:
