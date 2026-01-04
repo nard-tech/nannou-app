@@ -1,0 +1,20 @@
+$schema: "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/cspell.schema.json"
+version: "0.2"
+language: en-US
+languageId:
+- rust
+useGitignore: true  # ローカルで gitignore されているファイルを無視
+cache:
+  useCache: true
+  cacheFormat: legacy
+  cacheLocation: cspell_cache
+  cacheStrategy: metadata
+dictionaryDefinitions:
+- name: rust
+  path: ./dict/rust.txt
+  addWords: true
+dictionaries:
+- en_US
+- rust
+ignorePaths:
+- ../.cspell/dict/*.txt
