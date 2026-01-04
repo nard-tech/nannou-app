@@ -10,11 +10,15 @@ cache:
   cacheLocation: cspell_cache
   cacheStrategy: metadata
 dictionaryDefinitions:
+- name: math
+  path: ./dict/math.txt
+  addWords: true
 - name: rust
   path: ./dict/rust.txt
   addWords: true
 dictionaries:
 - en_US
+- math
 - rust
 ignorePaths:
 - ../.cspell/dict/*.txt
