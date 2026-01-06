@@ -9,7 +9,7 @@ const MAX: u32 = 10_000; // 計算する偶数の上限
 const STEP: u32 = 2;     // 偶数を 2 刻みで走査
 
 // 描画設定
-const WIN_W: u32 = 1400;
+const WINDOW_WIDTH: u32 = 1400;
 const WIN_H: u32 = 700;
 
 // 余白（軸とラベルを置くスペース）
@@ -38,7 +38,7 @@ struct Model {
 
 fn model(app: &App) -> Model {
     app.new_window()
-        .size(WIN_W, WIN_H)
+        .size(WINDOW_WIDTH, WIN_H)
         .title("Goldbach Comet")
         .view(view)
         .build()
