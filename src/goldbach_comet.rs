@@ -228,7 +228,7 @@ fn draw_ticks(
     let x_max_u = x_max.floor().max(0.0) as u32;
 
     // X 軸は LABEL_STEP ごとにラベルを打つ
-    let mut v = ((x_min_u + LABEL_STEP - 1) / LABEL_STEP) * LABEL_STEP;
+    let mut v = x_min_u.div_ceil(LABEL_STEP) * LABEL_STEP;
 
     while v <= x_max_u {
         let px = map_range(v as f32, x_min, x_max, left, right);
