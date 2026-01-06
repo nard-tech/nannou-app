@@ -14,7 +14,7 @@ const WINDOW_HEIGHT: u32 = 700;
 
 // 余白（軸とラベルを置くスペース）
 const PADDING_LEFT: f32 = 70.0;
-const PAD_R: f32 = 30.0;
+const PADDING_RIGHT: f32 = 30.0;
 const PAD_B: f32 = 60.0;
 const PAD_T: f32 = 50.0;
 
@@ -112,7 +112,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
 
     // プロット領域（ウィンドウから余白を除いた内側）
     let left = wr.left() + PADDING_LEFT;
-    let right = wr.right() - PAD_R;
+    let right = wr.right() - PADDING_RIGHT;
     let bottom = wr.bottom() + PAD_B;
     let top = wr.top() - PAD_T;
 
