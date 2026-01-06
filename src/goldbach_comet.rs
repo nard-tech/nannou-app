@@ -74,7 +74,7 @@ fn sieve(limit: u32) -> Vec<bool> {
     is_prime[0] = false;
     if n >= 1 { is_prime[1] = false; }
 
-    let mut p = 2 as usize;
+    let mut p = 2_usize;
     while p * p <= n {
         if is_prime[p] {
             let mut k = p * p;
