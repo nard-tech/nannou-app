@@ -16,7 +16,7 @@ const WINDOW_HEIGHT: u32 = 700;
 const PADDING_LEFT: f32 = 70.0;
 const PADDING_RIGHT: f32 = 30.0;
 const PADDING_BOTTOM: f32 = 60.0;
-const PAD_T: f32 = 50.0;
+const PADDING_TOP: f32 = 50.0;
 
 const POINT_SIZE: f32 = 2.0;   // プロットする四角点のサイズ
 const GRID_ALPHA: f32 = 0.18;  // グリッド線の透明度（0.0〜1.0）
@@ -114,7 +114,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
     let left = wr.left() + PADDING_LEFT;
     let right = wr.right() - PADDING_RIGHT;
     let bottom = wr.bottom() + PADDING_BOTTOM;
-    let top = wr.top() - PAD_T;
+    let top = wr.top() - PADDING_TOP;
 
     // データ範囲（ワールド座標）
     let x_min = START as f32;
