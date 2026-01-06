@@ -10,7 +10,7 @@ const STEP: u32 = 2;     // 偶数を 2 刻みで走査
 
 // 描画設定
 const WINDOW_WIDTH: u32 = 1400;
-const WIN_H: u32 = 700;
+const WINDOW_HEIGHT: u32 = 700;
 
 // 余白（軸とラベルを置くスペース）
 const PAD_L: f32 = 70.0;
@@ -38,7 +38,7 @@ struct Model {
 
 fn model(app: &App) -> Model {
     app.new_window()
-        .size(WINDOW_WIDTH, WIN_H)
+        .size(WINDOW_WIDTH, WINDOW_HEIGHT)
         .title("Goldbach Comet")
         .view(view)
         .build()
