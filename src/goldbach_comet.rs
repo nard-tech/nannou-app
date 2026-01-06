@@ -6,7 +6,7 @@ use std::f32::consts::FRAC_PI_2;
 // n を横軸、g(n) を縦軸にした静止画を 1 フレームで描く
 const START: u32 = 4;
 const MAX: u32 = 10_000; // 計算する偶数の上限
-const STEP: u32 = 2;     // 偶数を 2 刻みで走査
+const STEP: u32 = 2; // 偶数を 2 刻みで走査
 
 // 描画設定
 const WINDOW_WIDTH: u32 = 1400;
@@ -18,9 +18,9 @@ const PADDING_RIGHT: f32 = 30.0;
 const PADDING_BOTTOM: f32 = 60.0;
 const PADDING_TOP: f32 = 50.0;
 
-const POINT_SIZE: f32 = 2.0;   // プロットする四角点のサイズ
-const GRID_ALPHA: f32 = 0.18;  // グリッド線の透明度（0.0〜1.0）
-const SHOW_GRID: bool = true;  // グリッド表示の ON/OFF
+const POINT_SIZE: f32 = 2.0; // プロットする四角点のサイズ
+const GRID_ALPHA: f32 = 0.18; // グリッド線の透明度（0.0〜1.0）
+const SHOW_GRID: bool = true; // グリッド表示の ON/OFF
 
 const LABEL_STEP: u32 = MAX / 5; // X 軸ラベル間隔
 
@@ -72,7 +72,9 @@ fn sieve(limit: u32) -> Vec<bool> {
     let mut is_prime = vec![true; n + 1];
 
     is_prime[0] = false;
-    if n >= 1 { is_prime[1] = false; }
+    if n >= 1 {
+        is_prime[1] = false;
+    }
 
     let mut p = 2_usize;
     while p * p <= n {
@@ -188,7 +190,15 @@ fn view(app: &App, model: &Model, frame: Frame) {
 }
 
 // 描画領域を等分して補助線を引く
-fn draw_grid(draw: &Draw, left: f32, right: f32, bottom: f32, top: f32, x_div: usize, y_div: usize) {
+fn draw_grid(
+    draw: &Draw,
+    left: f32,
+    right: f32,
+    bottom: f32,
+    top: f32,
+    x_div: usize,
+    y_div: usize,
+) {
     let grid_col = srgba(1.0, 1.0, 1.0, GRID_ALPHA);
 
     for i in 1..x_div {
@@ -274,7 +284,11 @@ fn draw_ticks(
 fn nice_tick_step(range: f32, desired_ticks: u32) -> f32 {
     let desired = desired_ticks.max(1) as f32;
     let step = nice_number(range / desired, true);
-    if step > 0.0 { step } else { 1.0 }
+    if step > 0.0 {
+        step
+    } else {
+        1.0
+    }
 }
 
 // グラフの軸に使う「キリの良い」数値を返す（1, 2, 5 系列）
