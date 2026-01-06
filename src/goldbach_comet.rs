@@ -5,7 +5,7 @@ use std::f32::consts::FRAC_PI_2;
 // 偶数 n ごとの素数分割数 g(n) を散布図として描画する
 // n を横軸、g(n) を縦軸にした静止画を 1 フレームで描く
 const START: u32 = 4;
-const END: u32 = 10_000; // 計算する偶数の上限
+const MAX: u32 = 10_000; // 計算する偶数の上限
 const STEP: u32 = 2;     // 偶数を 2 刻みで走査
 
 // 描画設定
@@ -22,7 +22,7 @@ const POINT_SIZE: f32 = 2.0;   // プロットする四角点のサイズ
 const GRID_ALPHA: f32 = 0.18;  // グリッド線の透明度（0.0〜1.0）
 const SHOW_GRID: bool = true;  // グリッド表示の ON/OFF
 
-const LABEL_STEP: u32 = END / 5; // X 軸ラベル間隔
+const LABEL_STEP: u32 = MAX / 5; // X 軸ラベル間隔
 
 pub fn run() {
     // nannou エントリポイント
@@ -45,14 +45,14 @@ fn model(app: &App) -> Model {
         .unwrap();
 
     // 素数表（エラトステネス）を先に用意
-    let is_prime = sieve(END);
+    let is_prime = sieve(MAX);
 
     // 初期化時に全点を計算・キャッシュしておき、
     // 描画側を軽くする
     let mut points = Vec::new();
     let mut max_count = 0u32;
 
-    for n in (START..=END).step_by(STEP as usize) {
+    for n in (START..=MAX).step_by(STEP as usize) {
         let c = goldbach_pairs_count(n, &is_prime);
         max_count = max_count.max(c);
         points.push((n as f32, c as f32));
@@ -118,7 +118,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
 
     // データ範囲（ワールド座標）
     let x_min = START as f32;
-    let x_max = END as f32;
+    let x_max = MAX as f32;
     let y_min = 0.0f32;
     let raw_y_max = (model.max_count.max(1)) as f32;
     let desired_y_ticks = 5;
