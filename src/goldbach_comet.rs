@@ -120,7 +120,11 @@ fn view(app: &App, model: &Model, frame: Frame) {
     let x_min = START as f32;
     let x_max = END as f32;
     let y_min = 0.0f32;
-    let y_max = (model.max_count.max(1)) as f32;
+    let raw_y_max = (model.max_count.max(1)) as f32;
+    let desired_y_ticks = 5;
+    let y_step = nice_tick_step(raw_y_max - y_min, desired_y_ticks);
+    let y_max = (raw_y_max / y_step).ceil() * y_step;
+    let y_tick_count = ((y_max - y_min) / y_step).round().max(1.0) as u32;
 
     // 軸・ラベル描画
     draw.line()
@@ -153,9 +157,21 @@ fn view(app: &App, model: &Model, frame: Frame) {
 
     // グリッドと目盛り
     if SHOW_GRID {
-        draw_grid(&draw, left, right, bottom, top, 10, 8);
+        draw_grid(&draw, left, right, bottom, top, 10, y_tick_count as usize);
     }
-    draw_ticks(&draw, left, right, bottom, top, x_min, x_max, y_min, y_max);
+    draw_ticks(
+        &draw,
+        left,
+        right,
+        bottom,
+        top,
+        x_min,
+        x_max,
+        y_min,
+        y_max,
+        y_step,
+        y_tick_count,
+    );
 
     // 点群をワールド座標 -> 画面座標へマッピングして描画
     for &(x, y) in &model.points {
@@ -205,6 +221,8 @@ fn draw_ticks(
     x_max: f32,
     y_min: f32,
     y_max: f32,
+    y_step: f32,
+    y_ticks: u32,
 ) {
     let x_min_u = x_min.ceil().max(0.0) as u32;
     let x_max_u = x_max.floor().max(0.0) as u32;
@@ -230,12 +248,15 @@ fn draw_ticks(
         v += LABEL_STEP;
     }
 
-    // Y 軸は等分して値を配置
-    let y_ticks = 5;
+    // Y 軸は切り上げた上限とキリの良い間隔で配置
     for i in 0..=y_ticks {
-        let t = i as f32 / y_ticks as f32;
-        let py = lerp(bottom, top, t);
-        let vv = lerp(y_min, y_max, t).round() as i32;
+        let value = y_min + y_step * i as f32;
+        let py = map_range(value, y_min, y_max, bottom, top);
+        let label = if y_step.fract().abs() < f32::EPSILON {
+            format!("{:.0}", value)
+        } else {
+            format!("{:.2}", value)
+        };
 
         draw.line()
             .start(pt2(left, py))
@@ -243,11 +264,48 @@ fn draw_ticks(
             .weight(1.0)
             .color(WHITE);
 
-        draw.text(&format!("{}", vv))
+        draw.text(&label)
             .x_y(left - 24.0, py)
             .color(WHITE)
             .font_size(12);
     }
+}
+
+fn nice_tick_step(range: f32, desired_ticks: u32) -> f32 {
+    let desired = desired_ticks.max(1) as f32;
+    let step = nice_number(range / desired, true);
+    if step > 0.0 { step } else { 1.0 }
+}
+
+// グラフの軸に使う「キリの良い」数値を返す（1, 2, 5 系列）
+fn nice_number(x: f32, round: bool) -> f32 {
+    if x == 0.0 {
+        return 0.0;
+    }
+
+    let exp = x.abs().log10().floor();
+    let f = x / 10f32.powf(exp);
+    let nf = if round {
+        if f < 1.5 {
+            1.0
+        } else if f < 3.0 {
+            2.0
+        } else if f < 7.0 {
+            5.0
+        } else {
+            10.0
+        }
+    } else if f <= 1.0 {
+        1.0
+    } else if f <= 2.0 {
+        2.0
+    } else if f <= 5.0 {
+        5.0
+    } else {
+        10.0
+    };
+
+    nf * 10f32.powf(exp)
 }
 
 // 線形補間
