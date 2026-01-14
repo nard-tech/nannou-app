@@ -5,24 +5,24 @@ use std::f32::consts::FRAC_PI_2;
 // 偶数 n ごとの素数分割数 g(n) を散布図として描画する
 // n を横軸、g(n) を縦軸にした静止画を 1 フレームで描く
 const START: u32 = 4;
-const END: u32 = 10_000; // 計算する偶数の上限
-const STEP: u32 = 2;     // 偶数を 2 刻みで走査
+const MAX: u32 = 10_000; // 計算する偶数の上限
+const STEP: u32 = 2; // 偶数を 2 刻みで走査
 
 // 描画設定
-const WIN_W: u32 = 1400;
-const WIN_H: u32 = 700;
+const WINDOW_WIDTH: u32 = 1400;
+const WINDOW_HEIGHT: u32 = 700;
 
 // 余白（軸とラベルを置くスペース）
-const PAD_L: f32 = 70.0;
-const PAD_R: f32 = 30.0;
-const PAD_B: f32 = 60.0;
-const PAD_T: f32 = 50.0;
+const PADDING_LEFT: f32 = 70.0;
+const PADDING_RIGHT: f32 = 30.0;
+const PADDING_BOTTOM: f32 = 60.0;
+const PADDING_TOP: f32 = 50.0;
 
-const POINT_SIZE: f32 = 2.0;   // プロットする四角点のサイズ
-const GRID_ALPHA: f32 = 0.18;  // グリッド線の透明度（0.0〜1.0）
-const SHOW_GRID: bool = true;  // グリッド表示の ON/OFF
+const POINT_SIZE: f32 = 2.0; // プロットする四角点のサイズ
+const GRID_ALPHA: f32 = 0.18; // グリッド線の透明度（0.0〜1.0）
+const SHOW_GRID: bool = true; // グリッド表示の ON/OFF
 
-const LABEL_STEP: u32 = END / 5; // X 軸ラベル間隔
+const LABEL_STEP: u32 = MAX / 5; // X 軸ラベル間隔
 
 pub fn run() {
     // nannou エントリポイント
@@ -38,21 +38,21 @@ struct Model {
 
 fn model(app: &App) -> Model {
     app.new_window()
-        .size(WIN_W, WIN_H)
+        .size(WINDOW_WIDTH, WINDOW_HEIGHT)
         .title("Goldbach Comet")
         .view(view)
         .build()
         .unwrap();
 
     // 素数表（エラトステネス）を先に用意
-    let is_prime = sieve(END);
+    let is_prime = sieve(MAX);
 
     // 初期化時に全点を計算・キャッシュしておき、
     // 描画側を軽くする
     let mut points = Vec::new();
     let mut max_count = 0u32;
 
-    for n in (START..=END).step_by(STEP as usize) {
+    for n in (START..=MAX).step_by(STEP as usize) {
         let c = goldbach_pairs_count(n, &is_prime);
         max_count = max_count.max(c);
         points.push((n as f32, c as f32));
@@ -72,9 +72,11 @@ fn sieve(limit: u32) -> Vec<bool> {
     let mut is_prime = vec![true; n + 1];
 
     is_prime[0] = false;
-    if n >= 1 { is_prime[1] = false; }
+    if n >= 1 {
+        is_prime[1] = false;
+    }
 
-    let mut p = 2 as usize;
+    let mut p = 2_usize;
     while p * p <= n {
         if is_prime[p] {
             let mut k = p * p;
@@ -111,14 +113,14 @@ fn view(app: &App, model: &Model, frame: Frame) {
     let wr = app.window_rect();
 
     // プロット領域（ウィンドウから余白を除いた内側）
-    let left = wr.left() + PAD_L;
-    let right = wr.right() - PAD_R;
-    let bottom = wr.bottom() + PAD_B;
-    let top = wr.top() - PAD_T;
+    let left = wr.left() + PADDING_LEFT;
+    let right = wr.right() - PADDING_RIGHT;
+    let bottom = wr.bottom() + PADDING_BOTTOM;
+    let top = wr.top() - PADDING_TOP;
 
     // データ範囲（ワールド座標）
     let x_min = START as f32;
-    let x_max = END as f32;
+    let x_max = MAX as f32;
     let y_min = 0.0f32;
     let raw_y_max = (model.max_count.max(1)) as f32;
     let desired_y_ticks = 5;
@@ -188,7 +190,15 @@ fn view(app: &App, model: &Model, frame: Frame) {
 }
 
 // 描画領域を等分して補助線を引く
-fn draw_grid(draw: &Draw, left: f32, right: f32, bottom: f32, top: f32, x_div: usize, y_div: usize) {
+fn draw_grid(
+    draw: &Draw,
+    left: f32,
+    right: f32,
+    bottom: f32,
+    top: f32,
+    x_div: usize,
+    y_div: usize,
+) {
     let grid_col = srgba(1.0, 1.0, 1.0, GRID_ALPHA);
 
     for i in 1..x_div {
@@ -228,7 +238,7 @@ fn draw_ticks(
     let x_max_u = x_max.floor().max(0.0) as u32;
 
     // X 軸は LABEL_STEP ごとにラベルを打つ
-    let mut v = ((x_min_u + LABEL_STEP - 1) / LABEL_STEP) * LABEL_STEP;
+    let mut v = x_min_u.div_ceil(LABEL_STEP) * LABEL_STEP;
 
     while v <= x_max_u {
         let px = map_range(v as f32, x_min, x_max, left, right);
@@ -274,7 +284,11 @@ fn draw_ticks(
 fn nice_tick_step(range: f32, desired_ticks: u32) -> f32 {
     let desired = desired_ticks.max(1) as f32;
     let step = nice_number(range / desired, true);
-    if step > 0.0 { step } else { 1.0 }
+    if step > 0.0 {
+        step
+    } else {
+        1.0
+    }
 }
 
 // グラフの軸に使う「キリの良い」数値を返す（1, 2, 5 系列）
