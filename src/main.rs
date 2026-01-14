@@ -1,5 +1,6 @@
 // mod buddhabrot;
 mod goldbach_comet;
+mod mathlib;
 // mod sample;
 
 fn main() {
