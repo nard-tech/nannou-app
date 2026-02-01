@@ -221,6 +221,7 @@ fn draw_grid(
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn draw_ticks(
     draw: &Draw,
     left: f32,
