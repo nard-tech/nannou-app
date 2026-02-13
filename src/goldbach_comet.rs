@@ -1,3 +1,4 @@
+use crate::mathlib::prime::PrimeTable;
 use nannou::prelude::*;
 use std::f32::consts::FRAC_PI_2;
 
@@ -45,7 +46,7 @@ fn model(app: &App) -> Model {
         .unwrap();
 
     // 素数表（エラトステネス）を先に用意
-    let is_prime = sieve(MAX);
+    let primes = PrimeTable::new(MAX);
 
     // 初期化時に全点を計算・キャッシュしておき、
     // 描画側を軽くする
@@ -53,7 +54,7 @@ fn model(app: &App) -> Model {
     let mut max_count = 0u32;
 
     for n in (START..=MAX).step_by(STEP as usize) {
-        let c = goldbach_pairs_count(n, &is_prime);
+        let c = primes.goldbach_pairs_count(n);
         max_count = max_count.max(c);
         points.push((n as f32, c as f32));
     }
@@ -64,46 +65,6 @@ fn model(app: &App) -> Model {
 fn update(_app: &App, _model: &mut Model, _update: Update) {
     // 動的更新は不要
     // 静止画なので何もしない
-}
-
-/// エラトステネスの篩: 0..=limit の素数フラグを返す
-fn sieve(limit: u32) -> Vec<bool> {
-    let n = limit as usize;
-    let mut is_prime = vec![true; n + 1];
-
-    is_prime[0] = false;
-    if n >= 1 {
-        is_prime[1] = false;
-    }
-
-    let mut p = 2_usize;
-    while p * p <= n {
-        if is_prime[p] {
-            let mut k = p * p;
-            while k <= n {
-                is_prime[k] = false;
-                k += p;
-            }
-        }
-        p += 1;
-    }
-    is_prime
-}
-
-/// 偶数 n のゴールドバッハ分割数 g(n)
-/// p + q = n（p, q は素数、p<=q）を数える（順序は数えない）
-fn goldbach_pairs_count(n: u32, is_prime: &[bool]) -> u32 {
-    let half = n / 2; // p<=q を満たすため n/2 まで探索
-    let mut count = 0u32;
-    for p in 2..=half {
-        if is_prime[p as usize] {
-            let q = n - p; // q>=p が保証される
-            if is_prime[q as usize] {
-                count += 1;
-            }
-        }
-    }
-    count
 }
 
 fn view(app: &App, model: &Model, frame: Frame) {
