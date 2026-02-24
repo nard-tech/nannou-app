@@ -232,8 +232,7 @@ fn view(app: &App, model: &Model, frame: Frame) {
     // テクスチャをウィンドウ全体に貼り付けて描画
     // Draw the texture stretched to the window rectangle.
     let draw = app.draw();
-    draw
-        .texture(&model.texture)
+    draw.texture(&model.texture)
         .wh(app.window_rect().wh())
         .rotate(-PI / 2.0); // rotate 90 degrees clockwise
     draw.to_frame(app, &frame).unwrap();
