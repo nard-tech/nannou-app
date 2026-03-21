@@ -4,7 +4,9 @@ impl Prime {
     /// エラトステネスの篩: 0..=limit の素数フラグを返す
     pub fn sieve(limit: u32) -> Vec<bool> {
         let n = limit as usize;
-        let size = n.checked_add(1).expect("Prime::sieve: limit too large (n + 1 overflows usize)");
+        let size = n
+            .checked_add(1)
+            .expect("Prime::sieve: limit too large (n + 1 overflows usize)");
         let mut is_prime = vec![true; size];
 
         is_prime[0] = false;
