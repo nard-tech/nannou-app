@@ -1,5 +1,7 @@
 clippy
 nannou
+rgba
 rgba8unormsrgb
+rustfmt
 srgba
 wgpu

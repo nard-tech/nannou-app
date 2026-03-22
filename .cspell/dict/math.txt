@@ -1,2 +1,5 @@
 buddhabrot
 goldbach
+lerp
+powf
+pt

@@ -1,0 +1,9 @@
+gosu
+libasound
+libgl
+libx
+libxcursor
+libxi
+libxinerama
+libxkbcommon
+libxrandr
