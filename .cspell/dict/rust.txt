@@ -1,3 +1,4 @@
+clippy
 nannou
 rgba8unormsrgb
 srgba
