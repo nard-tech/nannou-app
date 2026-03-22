@@ -14,13 +14,9 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
+        with:
+          node-version: '24.10.0'
 
       - name: Run cSpell
         run: >
           npx --yes cspell lint --no-progress --config .cspell/cspell.config.yml
-          .github/workflows/*.yml
-          src/**/*.rs
-          Cargo.toml
-          Dockerfile
-          docker-compose.yml
-          entrypoint.sh

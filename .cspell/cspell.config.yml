@@ -35,7 +35,7 @@ dictionaries:
 - package
 - rust
 ignorePaths:
-- ../.cspell/dict/*.txt
+- ./dict/*.txt
 - .git/**
 - target
 - node_modules
