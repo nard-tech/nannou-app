@@ -3,6 +3,8 @@ version: "0.2"
 language: en-US
 languageId:
 - rust
+- markdown
+allowCompoundWords: true
 useGitignore: true  # ローカルで gitignore されているファイルを無視
 cache:
   useCache: true
@@ -26,3 +28,17 @@ dictionaries:
 - rust
 ignorePaths:
 - ../.cspell/dict/*.txt
+- .git/**
+- target
+- node_modules
+- package-lock.json
+- node_modules/**
+- target/**
+files:
+- "**/*.{rs,toml,md,txt,sh,yml,yaml}"
+- Dockerfile
+- .github/workflows/*.yml
+- src/**/*.rs
+- Cargo.toml
+- docker-compose.yml
+- entrypoint.sh
