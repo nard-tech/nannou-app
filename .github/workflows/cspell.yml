@@ -20,9 +20,3 @@ jobs:
       - name: Run cSpell
         run: >
           npx --yes cspell lint --no-progress --config .cspell/cspell.config.yml
-          .github/workflows/*.yml
-          src/**/*.rs
-          Cargo.toml
-          Dockerfile
-          docker-compose.yml
-          entrypoint.sh
