@@ -1,0 +1,26 @@
+name: CSpell
+
+on:
+  pull_request:
+
+jobs:
+  cspell:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Run cSpell
+        run: >
+          npx --yes cspell lint --no-progress --config .cspell/cspell.config.yml
+          .github/workflows/*.yml
+          src/**/*.rs
+          Cargo.toml
+          Dockerfile
+          docker-compose.yml
+          entrypoint.sh

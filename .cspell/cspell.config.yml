@@ -3,6 +3,8 @@ version: "0.2"
 language: en-US
 languageId:
 - rust
+- markdown
+allowCompoundWords: true
 useGitignore: true  # ローカルで gitignore されているファイルを無視
 cache:
   useCache: true
@@ -13,8 +15,14 @@ dictionaryDefinitions:
 - name: math
   path: ./dict/math.txt
   addWords: true
+- name: nannou
+  path: ./dict/nannou.txt
+  addWords: true
 - name: others
   path: ./dict/others.txt
+  addWords: true
+- name: package
+  path: ./dict/package.txt
   addWords: true
 - name: rust
   path: ./dict/rust.txt
@@ -22,7 +30,23 @@ dictionaryDefinitions:
 dictionaries:
 - en_US
 - math
+- nannou
 - others
+- package
 - rust
 ignorePaths:
 - ../.cspell/dict/*.txt
+- .git/**
+- target
+- node_modules
+- package-lock.json
+- node_modules/**
+- target/**
+files:
+- "**/*.{rs,toml,md,txt,sh,yml,yaml}"
+- Dockerfile
+- .github/workflows/*.yml
+- src/**/*.rs
+- Cargo.toml
+- docker-compose.yml
+- entrypoint.sh
