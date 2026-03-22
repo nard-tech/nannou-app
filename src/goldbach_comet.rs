@@ -45,12 +45,34 @@ struct PlotArea {
     top: f32,
 }
 
+#[derive(Clone, Copy)]
+struct PlotBounds {
+    x_min: f32,
+    x_max: f32,
+    y_min: f32,
+    y_max: f32,
+}
+
 fn plot_area_from_window_rect(wr: Rect) -> PlotArea {
     PlotArea {
         left: wr.left() + PADDING_LEFT,
         right: wr.right() - PADDING_RIGHT,
         bottom: wr.bottom() + PADDING_BOTTOM,
         top: wr.top() - PADDING_TOP,
+    }
+}
+
+fn plot_bounds_from_raw_y_max(raw_y_max: f32, y_step: f32) -> PlotBounds {
+    let x_min = START as f32;
+    let x_max = MAX as f32;
+    let y_min = 0.0f32;
+    let y_max = (raw_y_max / y_step).ceil() * y_step;
+
+    PlotBounds {
+        x_min,
+        x_max,
+        y_min,
+        y_max,
     }
 }
 
@@ -93,14 +115,13 @@ fn view(app: &App, model: &Model, frame: Frame) {
     let plot_area = plot_area_from_window_rect(wr);
 
     // データ範囲（ワールド座標）
-    let x_min = START as f32;
-    let x_max = MAX as f32;
-    let y_min = 0.0f32;
     let raw_y_max = (model.max_count.max(1)) as f32;
     let desired_y_ticks = 5;
-    let y_step = nice_tick_step(raw_y_max - y_min, desired_y_ticks);
-    let y_max = (raw_y_max / y_step).ceil() * y_step;
-    let y_tick_count = ((y_max - y_min) / y_step).round().max(1.0) as u32;
+    let y_step = nice_tick_step(raw_y_max, desired_y_ticks);
+    let plot_bounds = plot_bounds_from_raw_y_max(raw_y_max, y_step);
+    let y_tick_count = ((plot_bounds.y_max - plot_bounds.y_min) / y_step)
+        .round()
+        .max(1.0) as u32;
 
     // 軸・ラベル描画
     draw.line()
@@ -135,21 +156,24 @@ fn view(app: &App, model: &Model, frame: Frame) {
     if SHOW_GRID {
         draw_grid(&draw, &plot_area, 10, y_tick_count as usize);
     }
-    draw_ticks(
-        &draw,
-        &plot_area,
-        x_min,
-        x_max,
-        y_min,
-        y_max,
-        y_step,
-        y_tick_count,
-    );
+    draw_ticks(&draw, &plot_area, &plot_bounds, y_step, y_tick_count);
 
     // 点群をワールド座標 -> 画面座標へマッピングして描画
     for &(x, y) in &model.points {
-        let px = map_range(x, x_min, x_max, plot_area.left, plot_area.right);
-        let py = map_range(y, y_min, y_max, plot_area.bottom, plot_area.top);
+        let px = map_range(
+            x,
+            plot_bounds.x_min,
+            plot_bounds.x_max,
+            plot_area.left,
+            plot_area.right,
+        );
+        let py = map_range(
+            y,
+            plot_bounds.y_min,
+            plot_bounds.y_max,
+            plot_area.bottom,
+            plot_area.top,
+        );
 
         draw.rect()
             .x_y(px, py)
@@ -184,25 +208,27 @@ fn draw_grid(draw: &Draw, plot_area: &PlotArea, x_div: usize, y_div: usize) {
     }
 }
 
-#[allow(clippy::too_many_arguments)]
 fn draw_ticks(
     draw: &Draw,
     plot_area: &PlotArea,
-    x_min: f32,
-    x_max: f32,
-    y_min: f32,
-    y_max: f32,
+    plot_bounds: &PlotBounds,
     y_step: f32,
     y_ticks: u32,
 ) {
-    let x_min_u = x_min.ceil().max(0.0) as u32;
-    let x_max_u = x_max.floor().max(0.0) as u32;
+    let x_min_u = plot_bounds.x_min.ceil().max(0.0) as u32;
+    let x_max_u = plot_bounds.x_max.floor().max(0.0) as u32;
 
     // X 軸は LABEL_STEP ごとにラベルを打つ
     let mut v = x_min_u.div_ceil(LABEL_STEP) * LABEL_STEP;
 
     while v <= x_max_u {
-        let px = map_range(v as f32, x_min, x_max, plot_area.left, plot_area.right);
+        let px = map_range(
+            v as f32,
+            plot_bounds.x_min,
+            plot_bounds.x_max,
+            plot_area.left,
+            plot_area.right,
+        );
 
         // tick
         draw.line()
@@ -221,8 +247,14 @@ fn draw_ticks(
 
     // Y 軸は切り上げた上限とキリの良い間隔で配置
     for i in 0..=y_ticks {
-        let value = y_min + y_step * i as f32;
-        let py = map_range(value, y_min, y_max, plot_area.bottom, plot_area.top);
+        let value = plot_bounds.y_min + y_step * i as f32;
+        let py = map_range(
+            value,
+            plot_bounds.y_min,
+            plot_bounds.y_max,
+            plot_area.bottom,
+            plot_area.top,
+        );
         let label = if y_step.fract().abs() < f32::EPSILON {
             format!("{:.0}", value)
         } else {
