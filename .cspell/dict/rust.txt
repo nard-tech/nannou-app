@@ -1,7 +1,9 @@
 clippy
+mathlib
 nannou
 rgba
 rgba8unormsrgb
 rustfmt
+srgb
 srgba
 wgpu
