@@ -1,6 +1,7 @@
 mod buddhabrot;
 mod goldbach_comet;
 mod sample;
+mod ulam_spiral;
 
 mod mathlib;
 
@@ -10,6 +11,7 @@ const COMMANDS: &[(&str, CommandHandler)] = &[
     ("buddhabrot", buddhabrot::run),
     ("goldbach_comet", goldbach_comet::run),
     ("sample", sample::run),
+    ("ulam_spiral", ulam_spiral::run),
 ];
 
 fn main() {
